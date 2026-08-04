@@ -7,8 +7,7 @@ export async function handlerValidateChirp(req: Request, res: Response) {
     const content: resBody = req.body;
 
     if (content.body.length > 140){
-        res.status(400).send({"error": "Chirp is too long"});
-        return; 
+        throw new Error("Chirp is too long");
     }
 
     const words = content.body.split(" ");
