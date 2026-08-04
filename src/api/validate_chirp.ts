@@ -1,28 +1,30 @@
 import {Response, Request} from "express";
 
 export async function handlerValidateChirp(req: Request, res: Response) {
-    let body = "";
+    type resBody = {
+        body: string,
+    }
+    const content: resBody = req.body;
 
-    req.on("data", (chunk) => {
-        body += chunk;
-    });
+    if (content.body.length > 140){
+        res.status(400).send({"error": "Chirp is too long"});
+        return; 
+    }
 
-    req.on("end", () => {
-        try {
-            if (body.length > 140){
-                res.header("Content-Type", "application/json; charset=utf-8");
-                res.status(400).send(JSON.stringify({error: "Chirp is too long"}));
+    const words = content.body.split(" ");
+
+    const badwords = ["kerfuffle", "sharbert", "fornax"]
+    for (let i =0; i< words.length; i++){
+        const word = words[i];
+        const lower = word.toLowerCase();
+        if (badwords.includes(lower)){
+            words[i] = "****";
             }
-            else {
-                res.header("Content-Type", "application/json; charset=utf-8"); 
-                res.status(200).send(JSON.stringify({valid: true}));
-
-            }
-        } catch (error) {
-            res.header("Content-Type", "application/json; charset=utf-8");
-            res.status(500).send(JSON.stringify({error: "Something went wrong"}));
         }
 
-    });
+    content.body = words.join(" ");
+
+    res.status(200).send({cleanedBody: content.body});
+
 }
             

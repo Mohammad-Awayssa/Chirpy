@@ -9,7 +9,7 @@ const app = express();
 const port = 8080;
 
 
-app.use(middlewareLogResponses);
+app.use(middlewareLogResponses, express.json());
 
 app.use("/app", middlewareMetricsInc, express.static("./src/app"));
 
