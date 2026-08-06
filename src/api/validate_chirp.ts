@@ -1,4 +1,5 @@
 import {Response, Request} from "express";
+import { BadRequestError } from "../app/error.js";
 
 export async function handlerValidateChirp(req: Request, res: Response) {
     type resBody = {
@@ -7,7 +8,7 @@ export async function handlerValidateChirp(req: Request, res: Response) {
     const content: resBody = req.body;
 
     if (content.body.length > 140){
-        throw new Error("Chirp is too long");
+        throw new BadRequestError("Chirp is too long. Max length is 140");
     }
 
     const words = content.body.split(" ");
