@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { config } from "../config.js";
-import { users } from "../db/schema.js";
-import { db } from "../db/index.js";
+import { deleteAllUsers } from "../db/queries/users.js";
 
 export async function handlerReset(req: Request, res: Response) {
     if (config.platform !== "dev") {
@@ -9,6 +8,6 @@ export async function handlerReset(req: Request, res: Response) {
         return;
     }
     config.fileserverHits = 0;
-    await db.delete(users).execute();
+    await deleteAllUsers();
     res.send("Metrics reset successfully");
 }
