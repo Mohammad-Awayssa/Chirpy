@@ -1,6 +1,7 @@
 import {Response, Request} from "express";
 import { BadRequestError } from "../app/error.js";
-import { createChirp, getAllChirps } from "../db/queries/chirps.js";
+import { createChirp, getAllChirps, getChirpsById } from "../db/queries/chirps.js";
+import { chirps } from "../db/schema.js";
 
 export async function handlerChirps(req: Request, res: Response) {
     type resBody = {
@@ -37,4 +38,23 @@ export async function handlerAllChirps(req: Request, res: Response) {
     const chirps = await getAllChirps();
     res.status(200).send(chirps);
 }
+
+export async function handlerChirpId(req: Request, res: Response) {
+
+    const chirpId = req.params.chirpId;
+    if(typeof chirpId === "string"){
+        const chirps = await getChirpsById(chirpId);
+        if (!chirps) {
+            res.status(404).send({ error: "Chirp not found" });
+            return;
+        }
+        res.status(200).send(chirps);
+    }
+    else {
+        res.status(400).send({ error: "Invalid chirpId" });
+    }
+    
+    
+}
+
             
