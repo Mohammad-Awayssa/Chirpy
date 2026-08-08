@@ -15,6 +15,13 @@
       "when": 1786219246084,
       "tag": "0001_youthful_rumiko_fujikawa",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1786226010318,
+      "tag": "0002_aspiring_ink",
+      "breakpoints": true
     }
   ]
 }
