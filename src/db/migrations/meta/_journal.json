@@ -22,6 +22,13 @@
       "when": 1786226010318,
       "tag": "0002_aspiring_ink",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1786307640595,
+      "tag": "0003_whole_wallop",
+      "breakpoints": true
     }
   ]
 }

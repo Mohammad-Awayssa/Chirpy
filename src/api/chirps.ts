@@ -1,14 +1,14 @@
 import {Response, Request} from "express";
 import { BadRequestError } from "../app/error.js";
 import { createChirp, getAllChirps, getChirpsById } from "../db/queries/chirps.js";
-import { chirps } from "../db/schema.js";
+import { getBearerToken, validateJWT } from "../auth.js";
+import { config } from "../config.js";
 
 export async function handlerChirps(req: Request, res: Response) {
-    type resBody = {
-        body: string,
-        userId : string,
-    }
-    const content: resBody = req.body;
+    const token = getBearerToken(req);
+    const userId = validateJWT(token, config.jwtSecret);
+
+    const content = req.body;
     
     
     if (content.body.length > 140){
@@ -29,7 +29,7 @@ export async function handlerChirps(req: Request, res: Response) {
     content.body = words.join(" ");
 
     
-    const chirp = await createChirp(content);
+    const chirp = await createChirp({body: content.body, userId});
 
     res.status(201).send(chirp);
 }

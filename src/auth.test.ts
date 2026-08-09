@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeAll } from "vitest";
-import { checkPasswordHash, hashPassword, makeJWT, validateJWT } from "./auth.js";
+import { checkPasswordHash, getBearerToken, hashPassword, makeJWT, makeRefreshToken, validateJWT } from "./auth.js";
+import { Request } from "express";
 
 describe("Password Hashing", () => {
   const password1 = "correctPassword123!";
@@ -50,4 +51,36 @@ describe("JWT Generation and Validation", () => {
         expect(() => validateJWT(token, "wrongSecret")).toThrow();
     });
 
+});
+
+describe("getBearerToken function", () => {
+
+    it("should extract the token from a valid Authorization header", () => {
+        const req = {
+            get: () => "Bearer testToken123"
+        }as unknown as Request;
+
+        const token = getBearerToken(req);
+        expect(token).toBe("testToken123");
+    });
+
+    it("should throw an error if the Authorization header is missing", () => {
+        const req = {
+            get: () => undefined
+        }as unknown as Request;
+        expect(() => getBearerToken(req)).toThrow("Missing Authorization header");
+    });
+});
+
+describe("refresh token generation", () => {
+    it("should generate a refresh token of 64 characters", () => {
+        const token = makeRefreshToken();
+        expect(token).toHaveLength(64);
+    });
+
+    it("should generate unique refresh tokens", () => {
+        const token1 = makeRefreshToken();
+        const token2 = makeRefreshToken();
+        expect(token1).not.toBe(token2);
+    });
 });
