@@ -12,6 +12,7 @@ import { config, dbConfig } from "./config.js";
 import { handlerCreateUser, handlerUpdateUser } from "./api/users.js";
 import { handlerRefresh } from "./api/refresh.js";
 import { handlerRevoke } from "./api/revoke.js";
+import { handlerPolkaWebhook } from "./api/polka.js";
 
 const migrationClient = postgres(config.dbURL, { max: 1 });
 await migrate(drizzle(migrationClient), dbConfig.migrationConfig);
@@ -54,6 +55,9 @@ app.post("/api/refresh", (req, res, next) => {
 });
 app.post("/api/revoke", (req, res, next) => {
     Promise.resolve(handlerRevoke(req, res)).catch(next);
+});
+app.post("/api/polka/webhooks", (req, res, next) => {
+    Promise.resolve(handlerPolkaWebhook(req, res)).catch(next);
 });
 
 app.put("/api/users", handlerUpdateUser);
