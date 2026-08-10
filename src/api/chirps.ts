@@ -1,6 +1,6 @@
 import {Response, Request} from "express";
 import { BadRequestError } from "../app/error.js";
-import { createChirp, getAllChirps, getChirpsById } from "../db/queries/chirps.js";
+import { createChirp, getAllChirps, getChirpsById, deleteChirp } from "../db/queries/chirps.js";
 import { getBearerToken, validateJWT } from "../auth.js";
 import { config } from "../config.js";
 
@@ -53,8 +53,32 @@ export async function handlerChirpId(req: Request, res: Response) {
     else {
         res.status(400).send({ error: "Invalid chirpId" });
     }
-    
-    
 }
 
-            
+export async function handlerDeleteChirp(req: Request, res: Response) {
+    const token = getBearerToken(req);
+    const userId = validateJWT(token, config.jwtSecret);
+
+    const chirpId = req.params.chirpId;
+
+    if (typeof chirpId !== "string") {
+        res.status(400).send({ error: "Invalid chirpId" });
+        return;
+    }
+
+    const chirp = await getChirpsById(chirpId);
+        
+    if (!chirp) {
+        res.status(404).send({ error: "Chirp not found" });
+        return;
+    }
+        
+    if (chirp.userId !== userId) {
+        res.status(403).send({ error: "Forbidden" });
+        return;
+    }
+
+    await deleteChirp(chirpId);
+    res.status(204).send();
+    
+}
